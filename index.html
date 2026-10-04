@@ -1,0 +1,968 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>মেসের হিসেব</title>
+<style>
+  * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, sans-serif; }
+  body {
+    margin: 0; padding: 12px;
+    background: #f0f4f8; color: #1a202c;
+    max-width: 900px; margin: 0 auto;
+  }
+  h1 { text-align: center; color: #2d3748; margin: 6px 0 10px; font-size: 20px; }
+
+  /* ==== অ্যাডমিন বার ==== */
+  .admin-bar {
+    display: flex; justify-content: center; align-items: center;
+    gap: 8px; margin-bottom: 14px; flex-wrap: wrap;
+  }
+  .admin-badge {
+    display: inline-block; padding: 6px 14px; border-radius: 16px;
+    font-size: 13px; font-weight: bold;
+    background: #e2e8f0; color: #4a5568;
+  }
+  .admin-badge.on { background: #c6f6d5; color: #2f855a; }
+  .btn-admin {
+    padding: 6px 14px; border: none; border-radius: 16px;
+    font-size: 13px; font-weight: bold; cursor: pointer;
+    background: #3182ce; color: #fff;
+  }
+  .btn-admin:hover { background: #2b6cb0; }
+  .btn-save-sheet {
+    padding: 8px 18px; border: none; border-radius: 16px;
+    font-size: 13px; font-weight: bold; cursor: pointer;
+    background: #2f855a; color: #fff;
+  }
+  .btn-save-sheet:hover { background: #276749; }
+
+  /* ==== সেকেন্ড হেডার ==== */
+  .sub-header {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 10px; margin-bottom: 16px;
+  }
+  .sub-card {
+    background: #fff; border-radius: 10px; padding: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06); text-align: center;
+  }
+  .sub-card .label { font-size: 13px; color: #4a5568; font-weight: 600; }
+  .sub-card .value { font-size: 20px; font-weight: bold; margin-top: 4px; color: #2b6cb0; }
+  .sub-card.right .value { color: #805ad5; }
+
+  /* ==== সামারি কার্ড ==== */
+  .summary-card {
+    background: #fff; border-radius: 14px; padding: 16px 10px;
+    display: grid; grid-template-columns: 1fr 1fr 1fr;
+    gap: 8px; box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+    margin-bottom: 18px;
+  }
+  .stat { text-align: center; padding: 8px 4px; border-radius: 10px; }
+  .stat .label { font-size: 13px; font-weight: 600; color: #4a5568; margin-bottom: 4px; }
+  .stat .value { font-size: 18px; font-weight: bold; }
+  .stat.joma   { background: #f0fff4; } .stat.joma .value { color: #2f855a; }
+  .stat.khoroch{ background: #fff5f5; } .stat.khoroch .value { color: #c53030; }
+  .stat.oboshishto { background: #ebf8ff; } .stat.oboshishto .value { color: #2b6cb0; }
+
+  /* ==== ট্রগল ==== */
+  .toggle-row {
+    display: flex; align-items: center; justify-content: space-between;
+    background: #fff; padding: 12px 16px; border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06); margin-bottom: 10px;
+    cursor: pointer; user-select: none;
+  }
+  .toggle-row span { font-weight: 600; color: #2d3748; font-size: 14px; }
+  .switch {
+    position: relative; width: 44px; height: 24px;
+    background: #cbd5e0; border-radius: 20px; transition: 0.3s;
+  }
+  .switch::after {
+    content: ''; position: absolute; width: 18px; height: 18px;
+    background: #fff; border-radius: 50%; top: 3px; left: 3px;
+    transition: 0.3s; box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+  }
+  .switch.active { background: #3182ce; }
+  .switch.active::after { transform: translateX(20px); }
+
+  /* ==== ইনপুট ফর্ম ==== */
+  .form-box {
+    background: #fff; border-radius: 12px; padding: 0 16px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    max-height: 0; overflow: hidden;
+    transition: max-height 0.35s ease, padding 0.35s ease;
+    margin-bottom: 0;
+  }
+  .form-box.open { max-height: 500px; padding: 16px; margin-bottom: 16px; }
+  .form-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .form-inner input {
+    padding: 10px 12px; border: 1px solid #cbd5e0;
+    border-radius: 8px; font-size: 14px; outline: none; width: 100%;
+  }
+  .form-inner input:focus { border-color: #3182ce; }
+  .form-inner button {
+    grid-column: span 2; padding: 10px; border: none;
+    border-radius: 8px; background: #3182ce; color: #fff;
+    font-size: 14px; cursor: pointer; font-weight: bold;
+  }
+  .form-inner button:hover { background: #2b6cb0; }
+  .hint { font-size: 11px; color: #718096; grid-column: span 2; text-align: center; }
+
+  /* ==== জমার টেবিল ==== */
+  .table-box {
+    background: #fff; border-radius: 12px; overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06); margin-bottom: 20px;
+  }
+  table { width: 100%; border-collapse: collapse; }
+  th, td {
+    padding: 9px 10px; text-align: left;
+    border-bottom: 1px solid #e2e8f0; font-size: 13px;
+  }
+  thead th {
+    background: #2d3748; color: #fff; font-weight: 600;
+    font-size: 12px; text-transform: uppercase;
+  }
+  tbody tr:hover { background: #f7fafc; }
+  tbody tr:last-child td { border-bottom: none; }
+
+  .name-cell { font-weight: 600; color: #2d3748; }
+  .date-small {
+    display: block; font-size: 11px;
+    color: #718096; font-weight: normal; margin-top: 2px;
+  }
+  .amount-cell { font-weight: 600; color: #2f855a; }
+  .actions { display: flex; gap: 5px; justify-content: flex-end; }
+  .btn-sm {
+    border: none; padding: 4px 9px; border-radius: 6px;
+    cursor: pointer; font-size: 11px; font-weight: 600;
+  }
+  .btn-edit { background: #bee3f8; color: #2b6cb0; }
+  .btn-edit:hover { background: #90cdf4; }
+  .btn-del { background: #fed7d7; color: #c53030; }
+  .btn-del:hover { background: #fc8181; color: #fff; }
+  .empty { text-align: center; padding: 20px; color: #a0aec0; font-size: 13px; }
+
+  /* ★ গুরুত্বপূর্ণ: ডিফল্টে সব admin-only লুকানো */
+  .admin-only { display: none !important; }
+  /* ★ অ্যাডমিন মোডে দেখানোর জন্য আলাদা ক্লাস */
+  body.is-admin .admin-only { display: block !important; }
+  body.is-admin th.admin-only,
+  body.is-admin td.admin-only { display: table-cell !important; }
+  body.is-admin .toggle-row.admin-only { display: flex !important; }
+  body.is-admin button.admin-only,
+  body.is-admin .btn-save-sheet.admin-only { display: inline-block !important; }
+
+  /* ==== সেকশন হেডিং (কলাপ্সযোগ্য) ==== */
+  .section-head {
+    display: flex; justify-content: space-between; align-items: center;
+    color: #fff; padding: 12px 16px; border-radius: 12px;
+    font-weight: 600; font-size: 15px; cursor: pointer;
+    user-select: none; margin-bottom: 8px;
+    transition: border-radius 0.2s;
+  }
+  .section-head:hover { opacity: 0.92; }
+  .section-head .title { display: flex; align-items: center; gap: 8px; }
+  .section-head .arrow {
+    display: inline-block; transition: transform 0.3s;
+    font-size: 12px;
+  }
+  .section-head.collapsed .arrow { transform: rotate(-90deg); }
+  .section-head .total-meal { font-size: 14px; }
+
+  .meal-head { background: #2d3748; }
+  .meal-head .total-meal { color: #f6e05e; }
+  .khoroch-head { background: #742a2a; }
+  .khoroch-head .total-meal { color: #fbb6ce; }
+  .member-head { background: #22543d; }
+  .member-head .total-meal { color: #9ae6b4; }
+
+  /* ==== কলাপ্স বডি ==== */
+  .collapsible-body {
+    overflow: hidden; max-height: 0;
+    transition: max-height 0.4s ease;
+    background: #fff; border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    margin-bottom: 16px;
+  }
+  .collapsible-body.open { max-height: 6000px; }
+  .collapsible-body .meal-table-wrap {
+    border-radius: 12px; box-shadow: none; margin-bottom: 0;
+  }
+
+  .meal-table-wrap { background: #fff; overflow-x: auto; }
+  .meal-table { width: 100%; border-collapse: collapse; min-width: 400px; }
+  .meal-table th, .meal-table td {
+    padding: 7px 8px; border: 1px solid #e2e8f0;
+    font-size: 13px; text-align: center;
+  }
+  .meal-table thead th {
+    background: #edf2f7; color: #2d3748;
+    font-size: 12px; font-weight: 700;
+    position: sticky; top: 0;
+  }
+  .meal-table thead th:first-child {
+    background: #4a5568; color: #fff; min-width: 70px;
+  }
+  .date-cell {
+    background: #f7fafc; font-size: 11px; color: #4a5568;
+    font-weight: 600; white-space: nowrap;
+  }
+  .meal-input {
+    width: 100%; border: none; text-align: center;
+    font-size: 13px; padding: 5px 2px; outline: none;
+    background: transparent; font-weight: 600; color: #2d3748;
+    font-family: inherit;
+  }
+  .meal-input:focus { background: #ebf8ff; border-radius: 4px; }
+  .meal-input::-webkit-outer-spin-button,
+  .meal-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+  .meal-input { -moz-appearance: textfield; }
+  .meal-input:disabled { color: #4a5568; cursor: not-allowed; background: #f7fafc; }
+
+  /* খরচ টেবিল */
+  .khoroch-table { table-layout: auto; }
+  .khoroch-table thead th:first-child { background: #742a2a; }
+  .khoroch-input-desc { text-align: left !important; padding-left: 10px !important; }
+  .khoroch-input-amount {
+    text-align: right !important; padding-right: 10px !important;
+    color: #c53030; width: 100%; min-width: 60px;
+    font-variant-numeric: tabular-nums;
+  }
+  .khoroch-table td:last-child {
+    width: 1%; white-space: nowrap; padding: 4px 6px;
+  }
+
+  /* মোট রো */
+  .meal-total-row td {
+    background: #fefcbf; font-weight: bold;
+    color: #744210; font-size: 13px;
+  }
+  .meal-total-row td:first-child { background: #f6ad55; color: #fff; }
+  .khoroch-total-row td {
+    background: #fed7d7; font-weight: bold;
+    color: #742a2a; font-size: 13px;
+  }
+  .khoroch-total-row td:first-child { background: #e53e3e; color: #fff; }
+  .member-total-row td {
+    background: #c6f6d5; font-weight: bold;
+    color: #22543d; font-size: 13px;
+  }
+  .member-total-row td:first-child { background: #22543d; color: #fff; }
+
+  /* সদস্যের হিসাব */
+  .member-table thead th { background: #22543d; color: #fff; }
+  .member-table thead th:first-child { background: #22543d; }
+  .member-table td { font-size: 12px; }
+  .member-name { text-align: left; font-weight: 600; color: #2d3748; padding-left: 10px; }
+  .member-meal { color: #2b6cb0; font-weight: 600; }
+  .member-cost { color: #805ad5; font-weight: 600; }
+  .member-joma { color: #2f855a; font-weight: 600; }
+  .member-baki  { color: #c53030; font-weight: 700; }
+  .member-return { color: #2f855a; font-weight: 700; }
+  .member-equal  { color: #718096; font-weight: 700; }
+  .status-badge {
+    display: inline-block; padding: 3px 8px;
+    border-radius: 12px; font-size: 10px; font-weight: 700;
+  }
+  .badge-baki { background: #fed7d7; color: #c53030; }
+  .badge-return { background: #c6f6d5; color: #2f855a; }
+  .badge-equal { background: #e2e8f0; color: #4a5568; }
+
+  /* লোডিং ব্যাজ */
+  .loading {
+    text-align: center; padding: 8px; font-size: 12px;
+    color: #718096;
+  }
+
+  @media (max-width: 480px) {
+    .stat .value, .sub-card .value { font-size: 15px; }
+    .stat .label, .sub-card .label { font-size: 11px; }
+    th, td { padding: 6px; font-size: 11px; }
+    .member-table td { font-size: 10.5px; }
+    .status-badge { font-size: 9px; padding: 2px 5px; }
+  }
+</style>
+</head>
+<body>
+
+  <h1>🏠 মেসের হিসেব</h1>
+
+  <!-- ==== অ্যাডমিন বার ==== -->
+  <div class="admin-bar">
+    <span class="admin-badge" id="adminBadge">🔒 Viewer</span>
+    <button class="btn-admin" id="loginBtn" onclick="toggleAdmin()">অ্যাডমিন লগইন</button>
+    <button class="btn-save-sheet admin-only" id="saveBtn" onclick="saveAllToSheets()">
+      💾 Google Sheets-এ সেভ করুন
+    </button>
+  </div>
+  <div class="loading" id="loadingMsg">Google Sheets থেকে ডেটা লোড হচ্ছে...</div>
+
+  <!-- ==== সেকেন্ড হেডার ==== -->
+  <div class="sub-header">
+    <div class="sub-card">
+      <div class="label">মোট মিল</div>
+      <div class="value" id="headerTotalMeal">0</div>
+    </div>
+    <div class="sub-card right">
+      <div class="label">মাথাপিছু মিল খরচ</div>
+      <div class="value" id="perMealCost">৳ 0</div>
+    </div>
+  </div>
+
+  <!-- ==== সামারি কার্ড ==== -->
+  <div class="summary-card">
+    <div class="stat joma">
+      <div class="label">জমা</div>
+      <div class="value" id="totalJoma">৳ 0</div>
+    </div>
+    <div class="stat khoroch">
+      <div class="label">খরচ</div>
+      <div class="value" id="totalKhoroch">৳ 0</div>
+    </div>
+    <div class="stat oboshishto">
+      <div class="label">অবশিষ্ট</div>
+      <div class="value" id="totalOboshishto">৳ 0</div>
+    </div>
+  </div>
+
+  <!-- ==== ট্রগল (সদস্য ফর্ম) ==== -->
+  <div class="toggle-row admin-only" id="formToggle" onclick="toggleForm()">
+    <span>➕ নতুন সদস্য / জমা যোগ করুন</span>
+    <div class="switch" id="switch"></div>
+  </div>
+
+  <!-- ==== ইনপুট ফর্ম ==== -->
+  <div class="form-box" id="formBox">
+    <div class="form-inner">
+      <input type="text" id="nameInput" placeholder="নাম লিখুন" />
+      <input type="number" id="amountInput" placeholder="জমার পরিমাণ" />
+      <button onclick="saveEntry()" id="submitBtn">যোগ করুন</button>
+      <div class="hint">নাম যোগ করলেই মিল হিসাবে নতুন কলাম তৈরি হবে</div>
+    </div>
+  </div>
+
+  <!-- ==== জমার টেবিল ==== -->
+  <div class="table-box">
+    <table>
+      <thead>
+        <tr>
+          <th>নাম</th>
+          <th>জমা</th>
+          <th style="text-align:right;" class="admin-only">অ্যাকশন</th>
+        </tr>
+      </thead>
+      <tbody id="tableBody"></tbody>
+    </table>
+  </div>
+
+  <!-- ==== মিল হিসাব ==== -->
+  <div class="section-head meal-head collapsed" id="mealHead" onclick="toggleSection('mealBody','mealHead')">
+    <span class="title">
+      <span class="arrow">▼</span>
+      🍽️ মিল হিসাব
+    </span>
+    <span class="total-meal">মোট মিল: <span id="mealTotalHead">0</span></span>
+  </div>
+  <div class="collapsible-body" id="mealBody">
+    <div class="meal-table-wrap">
+      <table class="meal-table" id="mealTable">
+        <thead id="mealThead"></thead>
+        <tbody id="mealTbody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ==== খরচ হিসাব ==== -->
+  <div class="section-head khoroch-head collapsed" id="khorochHead" onclick="toggleSection('khorochBody','khorochHead')">
+    <span class="title">
+      <span class="arrow">▼</span>
+      💸 খরচ হিসাব
+    </span>
+    <span class="total-meal">মোট খরচ: <span id="khorochTotalHead">৳ 0</span></span>
+  </div>
+  <div class="collapsible-body" id="khorochBody">
+    <div class="meal-table-wrap">
+      <table class="meal-table khoroch-table" id="khorochTable">
+        <thead>
+          <tr>
+            <th style="min-width:70px;">তারিখ</th>
+            <th>খরচের বিবরণ</th>
+            <th>খরচ (৳)</th>
+          </tr>
+        </thead>
+        <tbody id="khorochTbody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ==== সদস্যের হিসাব ==== -->
+  <div class="section-head member-head collapsed" id="memberHead" onclick="toggleSection('memberBody','memberHead')">
+    <span class="title">
+      <span class="arrow">▼</span>
+      👥 সদস্যের হিসাব
+    </span>
+    <span class="total-meal">মোট সদস্য: <span id="memberCount">0</span></span>
+  </div>
+  <div class="collapsible-body" id="memberBody">
+    <div class="meal-table-wrap">
+      <table class="meal-table member-table" id="memberTable">
+        <thead>
+          <tr>
+            <th style="min-width:80px;">নাম</th>
+            <th>মিল</th>
+            <th>মিলের টাকা</th>
+            <th>জমা</th>
+            <th>বাকি/ফেরত</th>
+            <th>স্ট্যাটাস</th>
+          </tr>
+        </thead>
+        <tbody id="memberTbody"></tbody>
+      </table>
+    </div>
+  </div>
+
+<script>
+  /* =========================================================
+     ★★★ আপনার তথ্য এখানে বসান ★★★
+     ========================================================= */
+  const API_URL = "https://script.google.com/macros/s/AKfycbxl2h7T7PYxH3HmRB9jK5CkxzMKz8uT3950aROZk7LJEskZh32X4Ow8UBAGMaY7zJDUEw/exec";
+  const SECRET_KEY = "wasi180213";
+  /* ========================================================= */
+
+  /* ===== ডেটা ===== */
+  let entries = [];
+  let meals   = {};
+  let expenses = {};
+  let editIndex = -1;
+  let isAdmin = false;
+
+  /* ===== হেল্পার ===== */
+  function toBn(num) { return Number(num).toLocaleString('bn-BD'); }
+
+  function currentMonthKey() {
+    const d = new Date();
+    return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0');
+  }
+  function daysInCurrentMonth() {
+    const d = new Date();
+    return new Date(d.getFullYear(), d.getMonth() + 1, 0).getDate();
+  }
+  function formatDayBn(day) {
+    const d = new Date();
+    d.setDate(day);
+    return d.getDate() + ' ' + d.toLocaleString('bn-BD', { month: 'short' });
+  }
+  function safeId(name) {
+    return 'n' + name.replace(/[^a-zA-Z0-9\u0980-\u09FF]/g, '_');
+  }
+
+  /* ===== সেকশন কলাপ্স ===== */
+  function toggleSection(bodyId, headId) {
+    const body = document.getElementById(bodyId);
+    const head = document.getElementById(headId);
+    const isOpen = body.classList.toggle('open');
+    head.classList.toggle('collapsed', !isOpen);
+  }
+
+  /* ===== সদস্য ফর্ম টগল ===== */
+  function toggleForm() {
+    if (!isAdmin) return;
+    const box = document.getElementById('formBox');
+    const sw  = document.getElementById('switch');
+    const open = box.classList.toggle('open');
+    sw.classList.toggle('active', open);
+    if (open) document.getElementById('nameInput').focus();
+    else resetForm();
+  }
+  function openForm() {
+    document.getElementById('formBox').classList.add('open');
+    document.getElementById('switch').classList.add('active');
+  }
+  function resetForm() {
+    document.getElementById('nameInput').value = '';
+    document.getElementById('amountInput').value = '';
+    document.getElementById('submitBtn').textContent = 'যোগ করুন';
+    editIndex = -1;
+  }
+
+  /* ===== এন্ট্রি সেভ/এডিট ===== */
+  function saveEntry() {
+    if (!isAdmin) { alert('শুধু অ্যাডমিন এডিট করতে পারবেন'); return; }
+
+    const name = document.getElementById('nameInput').value.trim();
+    const amountRaw = document.getElementById('amountInput').value;
+    const amount = amountRaw === '' ? 0 : Number(amountRaw);
+
+    if (!name) { alert('নাম লিখুন'); return; }
+
+    if (editIndex === -1) {
+      if (entries.some(e => e.name === name)) {
+        alert('এই নামে ইতিমধ্যে এন্ট্রি আছে');
+        return;
+      }
+      entries.push({ name, amount, meals: 0, expenses: 0, date: new Date().toISOString() });
+    } else {
+      entries[editIndex].name = name;
+      entries[editIndex].amount = amount;
+    }
+
+    resetForm();
+    render();
+
+    document.getElementById('formBox').classList.remove('open');
+    document.getElementById('switch').classList.remove('active');
+  }
+
+  function editEntry(index) {
+    if (!isAdmin) { alert('শুধু অ্যাডমিন এডিট করতে পারবেন'); return; }
+    const e = entries[index];
+    document.getElementById('nameInput').value = e.name;
+    document.getElementById('amountInput').value = e.amount;
+    document.getElementById('submitBtn').textContent = 'আপডেট করুন';
+    editIndex = index;
+    openForm();
+    document.getElementById('nameInput').focus();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function deleteEntry(index) {
+    if (!isAdmin) { alert('শুধু অ্যাডমিন ডিলিট করতে পারবেন'); return; }
+    if (confirm('এই এন্ট্রিটি মুছে ফেলবেন?')) {
+      entries.splice(index, 1);
+      if (editIndex === index) resetForm();
+      render();
+    }
+  }
+
+  /* ===== মিল ডেটা (০ সেভ থাকবে) ===== */
+  function getMeal(monthKey, name, day) {
+    return (meals[monthKey] && meals[monthKey][name] && meals[monthKey][name][day]) || 0;
+  }
+  function setMeal(monthKey, name, day, value) {
+    if (!isAdmin) { alert('শুধু অ্যাডমিন এডিট করতে পারবেন'); return; }
+    if (!meals[monthKey]) meals[monthKey] = {};
+    if (!meals[monthKey][name]) meals[monthKey][name] = {};
+    if (value === '' || value === null || value === undefined) {
+      delete meals[monthKey][name][day];
+    } else {
+      meals[monthKey][name][day] = Number(value);
+    }
+  }
+  function onMealChange(monthKey, name, day, val) {
+    if (!isAdmin) return;
+    setMeal(monthKey, name, day, val);
+    updateMealTotals();
+    updateSubHeader();
+    updateMemberTable();
+  }
+
+  /* ===== খরচ ডেটা ===== */
+  function getExpense(monthKey, day) {
+    return (expenses[monthKey] && expenses[monthKey][day]) || { desc: '', amount: '' };
+  }
+  function setExpense(monthKey, day, field, value) {
+    if (!isAdmin) { alert('শুধু অ্যাডমিন এডিট করতে পারবেন'); return; }
+    if (!expenses[monthKey]) expenses[monthKey] = {};
+    if (!expenses[monthKey][day]) expenses[monthKey][day] = { desc: '', amount: '' };
+    expenses[monthKey][day][field] = value;
+    const item = expenses[monthKey][day];
+    if ((item.desc === '' || item.desc == null) &&
+        (item.amount === '' || item.amount == null)) {
+      delete expenses[monthKey][day];
+    }
+  }
+  function onExpenseChange(monthKey, day, field, val) {
+    if (!isAdmin) return;
+    setExpense(monthKey, day, field, val);
+    updateKhorochTotals();
+    updateSubHeader();
+    updateMemberTable();
+  }
+
+  function getTotalKhoroch() {
+    const monthKey = currentMonthKey();
+    let total = 0;
+    for (let d = 1; d <= daysInCurrentMonth(); d++) {
+      const e = getExpense(monthKey, d);
+      total += Number(e.amount) || 0;
+    }
+    return total;
+  }
+  function updateKhorochTotals() {
+    const total = getTotalKhoroch();
+    document.getElementById('khorochTotalHead').textContent = '৳ ' + toBn(total);
+    const cell = document.getElementById('khorochTotalCell');
+    if (cell) cell.textContent = '৳ ' + toBn(total);
+  }
+
+  /* ===== মিল টোটাল ===== */
+  function getPersonMealTotal(monthKey, name) {
+    let t = 0;
+    for (let d = 1; d <= daysInCurrentMonth(); d++) {
+      t += getMeal(monthKey, name, d);
+    }
+    return t;
+  }
+  function updateMealTotals() {
+    const monthKey = currentMonthKey();
+    let grand = 0;
+    entries.forEach(e => {
+      const personTotal = getPersonMealTotal(monthKey, e.name);
+      grand += personTotal;
+      const cell = document.getElementById('total-' + safeId(e.name));
+      if (cell) cell.textContent = toBn(personTotal);
+    });
+    document.getElementById('mealTotalHead').textContent = toBn(grand);
+    return grand;
+  }
+
+  /* ===== সেকেন্ড হেডার ===== */
+  function updateSubHeader() {
+    const monthKey = currentMonthKey();
+    let grandMeal = 0;
+    entries.forEach(e => {
+      grandMeal += getPersonMealTotal(monthKey, e.name);
+    });
+    document.getElementById('headerTotalMeal').textContent = toBn(grandMeal);
+
+    const totalKhoroch = getTotalKhoroch();
+    let perMeal = 0;
+    if (grandMeal > 0) perMeal = totalKhoroch / grandMeal;
+    document.getElementById('perMealCost').textContent =
+      '৳ ' + (perMeal ? perMeal.toFixed(2) : 0);
+
+    let totalJoma = 0;
+    entries.forEach(e => totalJoma += Number(e.amount));
+    document.getElementById('totalJoma').textContent = '৳ ' + toBn(totalJoma);
+    document.getElementById('totalKhoroch').textContent = '৳ ' + toBn(totalKhoroch);
+    document.getElementById('totalOboshishto').textContent = '৳ ' + toBn(totalJoma - totalKhoroch);
+  }
+
+  /* ===== মিল টেবিল ===== */
+  function renderMealTable() {
+    const monthKey = currentMonthKey();
+    const days = daysInCurrentMonth();
+    const thead = document.getElementById('mealThead');
+    const tbody = document.getElementById('mealTbody');
+
+    let headRow = '<tr><th>তারিখ</th>';
+    entries.forEach(e => { headRow += `<th>${e.name}</th>`; });
+    headRow += '</tr>';
+    thead.innerHTML = headRow;
+
+    let bodyHtml = '';
+    for (let d = 1; d <= days; d++) {
+      bodyHtml += `<tr>`;
+      bodyHtml += `<td class="date-cell">${formatDayBn(d)}</td>`;
+      entries.forEach(e => {
+        const stored = meals[monthKey] && meals[monthKey][e.name] && meals[monthKey][e.name][d];
+        const val = (stored !== undefined && stored !== null) ? stored : '';
+        bodyHtml += `<td>
+          <input type="number" class="meal-input"
+            value="${val}"
+            ${isAdmin ? '' : 'disabled'}
+            onchange="onMealChange('${monthKey}','${e.name.replace(/'/g,"\\'")}',${d},this.value)"
+            onfocus="this.select()" />
+        </td>`;
+      });
+      bodyHtml += `</tr>`;
+    }
+
+    bodyHtml += `<tr class="meal-total-row"><td>মোট মিল</td>`;
+    entries.forEach(e => {
+      bodyHtml += `<td id="total-${safeId(e.name)}">0</td>`;
+    });
+    bodyHtml += `</tr>`;
+
+    tbody.innerHTML = bodyHtml;
+    updateMealTotals();
+  }
+
+  /* ===== খরচ টেবিল ===== */
+  function renderKhorochTable() {
+    const monthKey = currentMonthKey();
+    const days = daysInCurrentMonth();
+    const tbody = document.getElementById('khorochTbody');
+    let html = '';
+
+    for (let d = 1; d <= days; d++) {
+      const e = getExpense(monthKey, d);
+      const descVal = (e.desc == null ? '' : e.desc).toString().replace(/"/g,'&quot;');
+      const amtVal = (e.amount === 0 || e.amount) ? e.amount : '';
+      html += `<tr>
+        <td class="date-cell">${formatDayBn(d)}</td>
+        <td>
+          <input type="text" class="meal-input khoroch-input-desc"
+            value="${descVal}"
+            placeholder="বিবরণ..."
+            ${isAdmin ? '' : 'disabled'}
+            onchange="onExpenseChange('${monthKey}',${d},'desc',this.value)" />
+        </td>
+        <td>
+          <input type="number" class="meal-input khoroch-input-amount"
+            value="${amtVal}"
+            placeholder="0"
+            ${isAdmin ? '' : 'disabled'}
+            onchange="onExpenseChange('${monthKey}',${d},'amount',this.value)"
+            onfocus="this.select()" />
+        </td>
+      </tr>`;
+    }
+
+    html += `<tr class="khoroch-total-row">
+      <td>মোট খরচ</td>
+      <td></td>
+      <td id="khorochTotalCell">৳ 0</td>
+    </tr>`;
+
+    tbody.innerHTML = html;
+    updateKhorochTotals();
+  }
+
+  /* ===== সদস্যের হিসাব ===== */
+  function updateMemberTable() {
+    const monthKey = currentMonthKey();
+    const tbody = document.getElementById('memberTbody');
+    document.getElementById('memberCount').textContent = toBn(entries.length);
+
+    let grandMeal = 0;
+    entries.forEach(e => grandMeal += getPersonMealTotal(monthKey, e.name));
+    const totalKhoroch = getTotalKhoroch();
+    const perMeal = grandMeal > 0 ? totalKhoroch / grandMeal : 0;
+
+    if (entries.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="6" class="empty">এখনো কোনো সদস্য নেই</td></tr>`;
+      return;
+    }
+
+    let html = '';
+    let sumMeal = 0, sumCost = 0, sumJoma = 0, sumBaki = 0;
+
+    entries.forEach(e => {
+      const personMeal = getPersonMealTotal(monthKey, e.name);
+      const personCost = personMeal * perMeal;
+      const joma = Number(e.amount) || 0;
+      const baki = personCost - joma;
+
+      sumMeal += personMeal;
+      sumCost += personCost;
+      sumJoma += joma;
+      sumBaki += baki;
+
+      let bakiClass, bakiText, badge;
+      if (baki > 0.5) {
+        bakiClass = 'member-baki';
+        bakiText = '৳ ' + toBn(Math.round(baki));
+        badge = '<span class="status-badge badge-baki">বাকি</span>';
+      } else if (baki < -0.5) {
+        bakiClass = 'member-return';
+        bakiText = '৳ ' + toBn(Math.round(Math.abs(baki)));
+        badge = '<span class="status-badge badge-return">ফেরত</span>';
+      } else {
+        bakiClass = 'member-equal';
+        bakiText = '৳ 0';
+        badge = '<span class="status-badge badge-equal">সমান</span>';
+      }
+
+      html += `<tr>
+        <td class="member-name">${e.name}</td>
+        <td class="member-meal">${toBn(personMeal)}</td>
+        <td class="member-cost">৳ ${toBn(Math.round(personCost))}</td>
+        <td class="member-joma">৳ ${toBn(joma)}</td>
+        <td class="${bakiClass}">${bakiText}</td>
+        <td>${badge}</td>
+      </tr>`;
+    });
+
+    let totalBakiClass, totalBakiText;
+    if (sumBaki > 0.5) { totalBakiClass = 'member-baki'; totalBakiText = '৳ ' + toBn(Math.round(sumBaki)); }
+    else if (sumBaki < -0.5) { totalBakiClass = 'member-return'; totalBakiText = '৳ ' + toBn(Math.round(Math.abs(sumBaki))); }
+    else { totalBakiClass = 'member-equal'; totalBakiText = '৳ 0'; }
+
+    html += `<tr class="member-total-row">
+      <td>সর্বমোট</td>
+      <td>${toBn(sumMeal)}</td>
+      <td>৳ ${toBn(Math.round(sumCost))}</td>
+      <td>৳ ${toBn(sumJoma)}</td>
+      <td class="${totalBakiClass}">${totalBakiText}</td>
+      <td></td>
+    </tr>`;
+
+    tbody.innerHTML = html;
+  }
+
+  /* ===== মূল রেন্ডার ===== */
+  function render() {
+    const tbody = document.getElementById('tableBody');
+    tbody.innerHTML = '';
+
+    if (entries.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="3" class="empty">এখনো কোনো সদস্য যোগ করা হয়নি</td></tr>`;
+    } else {
+      entries.forEach((e, i) => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>
+            <span class="name-cell">${e.name}</span>
+            <span class="date-small">${formatDate(e.date)}</span>
+          </td>
+          <td class="amount-cell">৳ ${toBn(e.amount)}</td>
+          <td class="admin-only" style="text-align:right; width:1%; white-space:nowrap;">
+            <div class="actions">
+              <button class="btn-sm btn-edit" onclick="editEntry(${i})">এডিট</button>
+              <button class="btn-sm btn-del"  onclick="deleteEntry(${i})">মুছুন</button>
+            </div>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    renderMealTable();
+    renderKhorochTable();
+    updateSubHeader();
+    updateMemberTable();
+    updateAdminUI();
+  }
+
+  function formatDate(iso) {
+    if (!iso) return '';
+    const d = new Date(iso);
+    if (isNaN(d)) return '';
+    return `${d.getDate()} ${d.toLocaleString('bn-BD',{month:'short'})} ${d.getFullYear()}`;
+  }
+
+  /* ===== অ্যাডমিন সিস্টেম ===== */
+  function toggleAdmin() {
+    if (isAdmin) {
+      isAdmin = false;
+      localStorage.removeItem('isAdminKey');
+      document.body.classList.remove('is-admin');
+      alert('লগআউট সম্পন্ন');
+    } else {
+      const key = prompt("Admin Key দিন:");
+      if (key === null) return;
+      if (key === SECRET_KEY) {
+        isAdmin = true;
+        localStorage.setItem('isAdminKey', SECRET_KEY);
+        document.body.classList.add('is-admin');
+        alert('✅ অ্যাডমিন মোড চালু হয়েছে');
+      } else {
+        alert('❌ ভুল key');
+      }
+    }
+    render();
+  }
+
+  function updateAdminUI() {
+    const badge = document.getElementById('adminBadge');
+    const btn = document.getElementById('loginBtn');
+
+    if (isAdmin) {
+      badge.textContent = '🔓 Admin';
+      badge.classList.add('on');
+      btn.textContent = 'লগআউট';
+      document.body.classList.add('is-admin');
+    } else {
+      badge.textContent = '🔒 Viewer';
+      badge.classList.remove('on');
+      btn.textContent = 'অ্যাডমিন লগইন';
+      document.body.classList.remove('is-admin');
+    }
+  }
+
+  /* ===== Google Sheets থেকে লোড ===== */
+  async function loadFromSheets() {
+    const loadingMsg = document.getElementById('loadingMsg');
+    loadingMsg.style.display = 'block';
+    loadingMsg.textContent = 'Google Sheets থেকে ডেটা লোড হচ্ছে...';
+    loadingMsg.style.color = '#718096';
+
+    if (API_URL.includes('YOUR_SCRIPT_ID')) {
+      loadingMsg.textContent = '⚠️ আগে API_URL সেট করুন';
+      loadingMsg.style.color = '#c53030';
+      return;
+    }
+
+    try {
+      const res = await fetch(API_URL);
+      const result = await res.json();
+
+      if (result.status === 'success' && result.data) {
+        const rows = result.data;
+        entries = [];
+        for (let i = 1; i < rows.length; i++) {
+          const r = rows[i];
+          if (r[0]) {
+            entries.push({
+              name: r[0],
+              amount: Number(r[1]) || 0,
+              meals: Number(r[2]) || 0,
+              expenses: Number(r[3]) || 0,
+              date: r[4] || new Date().toISOString()
+            });
+          }
+        }
+        render();
+        loadingMsg.style.display = 'none';
+      } else {
+        loadingMsg.textContent = '⚠️ ডেটা লোড ব্যর্থ';
+        loadingMsg.style.color = '#c53030';
+      }
+    } catch (e) {
+      loadingMsg.textContent = '⚠️ লোড ব্যর্থ: ' + e.message;
+      loadingMsg.style.color = '#c53030';
+    }
+  }
+
+  /* ===== Google Sheets-এ সেভ ===== */
+  async function saveAllToSheets() {
+    if (!isAdmin) { alert('শুধু অ্যাডমিন সেভ করতে পারবেন'); return; }
+    if (API_URL.includes('YOUR_SCRIPT_ID')) {
+      alert('আগে API_URL সেট করুন');
+      return;
+    }
+
+    const rows = entries.map(e => ({
+      name: e.name,
+      joma: Number(e.amount) || 0,
+      meals: Number(e.meals) || 0,
+      expenses: Number(e.expenses) || 0
+    }));
+
+    try {
+      await fetch(API_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'text/plain' },
+        body: JSON.stringify({
+          key: SECRET_KEY,
+          action: 'replaceAll',
+          rows: rows
+        })
+      });
+      alert('✅ Google Sheets-এ সেভ হয়েছে');
+    } catch (e) {
+      alert('❌ সেভ ব্যর্থ: ' + e.message);
+    }
+  }
+
+  /* ===== Enter কী ===== */
+  document.getElementById('amountInput').addEventListener('keypress', e => {
+    if (e.key === 'Enter') saveEntry();
+  });
+  document.getElementById('nameInput').addEventListener('keypress', e => {
+    if (e.key === 'Enter') document.getElementById('amountInput').focus();
+  });
+
+  /* ===== পেজ লোড ===== */
+  window.addEventListener('load', () => {
+    if (localStorage.getItem('isAdminKey') === SECRET_KEY) {
+      isAdmin = true;
+      document.body.classList.add('is-admin');
+    }
+    render();
+    loadFromSheets();
+  });
+</script>
+</body>
+</html>
