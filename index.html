@@ -4,291 +4,297 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>মেসের হিসেব</title>
-<style>
-  * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, sans-serif; }
-  body {
-    margin: 0; padding: 12px;
-    background: #f0f4f8; color: #1a202c;
-    max-width: 900px; margin: 0 auto;
-  }
-  h1 { text-align: center; color: #2d3748; margin: 6px 0 10px; font-size: 20px; }
+  <style>
+* { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, sans-serif; }
+body {
+  margin: 0; padding: 12px;
+  background: #f0f4f8; color: #1a202c;
+  max-width: 900px; margin: 0 auto;
+}
+h1 { text-align: center; color: #2d3748; margin: 6px 0 10px; font-size: 28px; }
 
-  /* ==== অ্যাডমিন বার ==== */
-  .admin-bar {
-    display: flex; justify-content: center; align-items: center;
-    gap: 8px; margin-bottom: 14px; flex-wrap: wrap;
-  }
-  .admin-badge {
-    display: inline-block; padding: 6px 14px; border-radius: 16px;
-    font-size: 13px; font-weight: bold;
-    background: #e2e8f0; color: #4a5568;
-  }
-  .admin-badge.on { background: #c6f6d5; color: #2f855a; }
-  .btn-admin {
-    padding: 6px 14px; border: none; border-radius: 16px;
-    font-size: 13px; font-weight: bold; cursor: pointer;
-    background: #3182ce; color: #fff;
-  }
-  .btn-admin:hover { background: #2b6cb0; }
-  .btn-save-sheet {
-    padding: 8px 18px; border: none; border-radius: 16px;
-    font-size: 13px; font-weight: bold; cursor: pointer;
-    background: #2f855a; color: #fff;
-  }
-  .btn-save-sheet:hover { background: #276749; }
+/* ==== অ্যাডমিন বার ==== */
+.admin-bar {
+  display: flex; justify-content: center; align-items: center;
+  gap: 10px; margin-bottom: 14px; flex-wrap: wrap;
+}
+.admin-badge {
+  display: inline-block; padding: 8px 18px; border-radius: 16px;
+  font-size: 16px; font-weight: bold;
+  background: #e2e8f0; color: #4a5568;
+}
+.admin-badge.on { background: #c6f6d5; color: #2f855a; }
+.btn-admin {
+  padding: 8px 18px; border: none; border-radius: 16px;
+  font-size: 16px; font-weight: bold; cursor: pointer;
+  background: #3182ce; color: #fff;
+}
+.btn-admin:hover { background: #2b6cb0; }
+.btn-save-sheet {
+  padding: 10px 22px; border: none; border-radius: 16px;
+  font-size: 16px; font-weight: bold; cursor: pointer;
+  background: #2f855a; color: #fff;
+}
+.btn-save-sheet:hover { background: #276749; }
 
-  /* ==== সেকেন্ড হেডার ==== */
-  .sub-header {
-    display: grid; grid-template-columns: 1fr 1fr;
-    gap: 10px; margin-bottom: 16px;
-  }
-  .sub-card {
-    background: #fff; border-radius: 10px; padding: 12px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.06); text-align: center;
-  }
-  .sub-card .label { font-size: 13px; color: #4a5568; font-weight: 600; }
-  .sub-card .value { font-size: 20px; font-weight: bold; margin-top: 4px; color: #2b6cb0; }
-  .sub-card.right .value { color: #805ad5; }
+/* ==== সেকেন্ড হেডার ==== */
+.sub-header {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 10px; margin-bottom: 16px;
+}
+.sub-card {
+  background: #fff; border-radius: 10px; padding: 14px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06); text-align: center;
+}
+.sub-card .label { font-size: 18px; color: #4a5568; font-weight: 600; }
+.sub-card .value { font-size: 34px; font-weight: bold; margin-top: 4px; color: #2b6cb0; }
+.sub-card.right .value { color: #805ad5; }
 
-  /* ==== সামারি কার্ড ==== */
-  .summary-card {
-    background: #fff; border-radius: 14px; padding: 16px 10px;
-    display: grid; grid-template-columns: 1fr 1fr 1fr;
-    gap: 8px; box-shadow: 0 4px 14px rgba(0,0,0,0.08);
-    margin-bottom: 18px;
-  }
-  .stat { text-align: center; padding: 8px 4px; border-radius: 10px; }
-  .stat .label { font-size: 13px; font-weight: 600; color: #4a5568; margin-bottom: 4px; }
-  .stat .value { font-size: 18px; font-weight: bold; }
-  .stat.joma   { background: #f0fff4; } .stat.joma .value { color: #2f855a; }
-  .stat.khoroch{ background: #fff5f5; } .stat.khoroch .value { color: #c53030; }
-  .stat.oboshishto { background: #ebf8ff; } .stat.oboshishto .value { color: #2b6cb0; }
+/* ==== সামারি কার্ড ==== */
+.summary-card {
+  background: #fff; border-radius: 14px; padding: 18px 12px;
+  display: grid; grid-template-columns: 1fr 1fr 1fr;
+  gap: 10px; box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+  margin-bottom: 18px;
+}
+.stat { text-align: center; padding: 10px 4px; border-radius: 10px; }
+.stat .label { font-size: 18px; font-weight: 600; color: #4a5568; margin-bottom: 6px; }
+.stat .value { font-size: 30px; font-weight: bold; }
+.stat.joma   { background: #f0fff4; } .stat.joma .value { color: #2f855a; }
+.stat.khoroch{ background: #fff5f5; } .stat.khoroch .value { color: #c53030; }
+.stat.oboshishto { background: #ebf8ff; } .stat.oboshishto .value { color: #2b6cb0; }
 
-  /* ==== ট্রগল ==== */
-  .toggle-row {
-    display: flex; align-items: center; justify-content: space-between;
-    background: #fff; padding: 12px 16px; border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.06); margin-bottom: 10px;
-    cursor: pointer; user-select: none;
-  }
-  .toggle-row span { font-weight: 600; color: #2d3748; font-size: 14px; }
-  .switch {
-    position: relative; width: 44px; height: 24px;
-    background: #cbd5e0; border-radius: 20px; transition: 0.3s;
-  }
-  .switch::after {
-    content: ''; position: absolute; width: 18px; height: 18px;
-    background: #fff; border-radius: 50%; top: 3px; left: 3px;
-    transition: 0.3s; box-shadow: 0 1px 3px rgba(0,0,0,0.2);
-  }
-  .switch.active { background: #3182ce; }
-  .switch.active::after { transform: translateX(20px); }
+/* ==== ট্রগল ==== */
+.toggle-row {
+  display: flex; align-items: center; justify-content: space-between;
+  background: #fff; padding: 14px 18px; border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06); margin-bottom: 10px;
+  cursor: pointer; user-select: none;
+}
+.toggle-row span { font-weight: 600; color: #2d3748; font-size: 17px; }
+.switch {
+  position: relative; width: 50px; height: 28px;
+  background: #cbd5e0; border-radius: 20px; transition: 0.3s;
+}
+.switch::after {
+  content: ''; position: absolute; width: 22px; height: 22px;
+  background: #fff; border-radius: 50%; top: 3px; left: 3px;
+  transition: 0.3s; box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+.switch.active { background: #3182ce; }
+.switch.active::after { transform: translateX(22px); }
 
-  /* ==== ইনপুট ফর্ম ==== */
-  .form-box {
-    background: #fff; border-radius: 12px; padding: 0 16px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-    max-height: 0; overflow: hidden;
-    transition: max-height 0.35s ease, padding 0.35s ease;
-    margin-bottom: 0;
-  }
-  .form-box.open { max-height: 500px; padding: 16px; margin-bottom: 16px; }
-  .form-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-  .form-inner input {
-    padding: 10px 12px; border: 1px solid #cbd5e0;
-    border-radius: 8px; font-size: 14px; outline: none; width: 100%;
-  }
-  .form-inner input:focus { border-color: #3182ce; }
-  .form-inner button {
-    grid-column: span 2; padding: 10px; border: none;
-    border-radius: 8px; background: #3182ce; color: #fff;
-    font-size: 14px; cursor: pointer; font-weight: bold;
-  }
-  .form-inner button:hover { background: #2b6cb0; }
-  .hint { font-size: 11px; color: #718096; grid-column: span 2; text-align: center; }
+/* ==== ইনপুট ফর্ম ==== */
+.form-box {
+  background: #fff; border-radius: 12px; padding: 0 16px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  max-height: 0; overflow: hidden;
+  transition: max-height 0.35s ease, padding 0.35s ease;
+  margin-bottom: 0;
+}
+.form-box.open { max-height: 500px; padding: 16px; margin-bottom: 16px; }
+.form-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.form-inner input {
+  padding: 12px 14px; border: 1px solid #cbd5e0;
+  border-radius: 8px; font-size: 17px; outline: none; width: 100%;
+}
+.form-inner input:focus { border-color: #3182ce; }
+.form-inner button {
+  grid-column: span 2; padding: 12px; border: none;
+  border-radius: 8px; background: #3182ce; color: #fff;
+  font-size: 17px; cursor: pointer; font-weight: bold;
+}
+.form-inner button:hover { background: #2b6cb0; }
+.hint { font-size: 13px; color: #718096; grid-column: span 2; text-align: center; }
 
-  /* ==== জমার টেবিল ==== */
-  .table-box {
-    background: #fff; border-radius: 12px; overflow: hidden;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.06); margin-bottom: 20px;
-  }
-  table { width: 100%; border-collapse: collapse; }
-  th, td {
-    padding: 9px 10px; text-align: left;
-    border-bottom: 1px solid #e2e8f0; font-size: 13px;
-  }
-  thead th {
-    background: #2d3748; color: #fff; font-weight: 600;
-    font-size: 12px; text-transform: uppercase;
-  }
-  tbody tr:hover { background: #f7fafc; }
-  tbody tr:last-child td { border-bottom: none; }
+/* ==== জমার টেবিল ==== */
+.table-box {
+  background: #fff; border-radius: 12px; overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06); margin-bottom: 20px;
+}
+table { width: 100%; border-collapse: collapse; }
+th, td {
+  padding: 11px 12px; text-align: left;
+  border-bottom: 1px solid #e2e8f0; font-size: 16px;
+}
+thead th {
+  background: #2d3748; color: #fff; font-weight: 600;
+  font-size: 15px; text-transform: uppercase;
+}
+tbody tr:hover { background: #f7fafc; }
+tbody tr:last-child td { border-bottom: none; }
 
-  .name-cell { font-weight: 600; color: #2d3748; }
-  .date-small {
-    display: block; font-size: 11px;
-    color: #718096; font-weight: normal; margin-top: 2px;
-  }
-  .amount-cell { font-weight: 600; color: #2f855a; }
-  .actions { display: flex; gap: 5px; justify-content: flex-end; }
-  .btn-sm {
-    border: none; padding: 4px 9px; border-radius: 6px;
-    cursor: pointer; font-size: 11px; font-weight: 600;
-  }
-  .btn-edit { background: #bee3f8; color: #2b6cb0; }
-  .btn-edit:hover { background: #90cdf4; }
-  .btn-del { background: #fed7d7; color: #c53030; }
-  .btn-del:hover { background: #fc8181; color: #fff; }
-  .empty { text-align: center; padding: 20px; color: #a0aec0; font-size: 13px; }
+.name-cell { font-weight: 600; color: #2d3748; }
+.date-small {
+  display: block; font-size: 13px;
+  color: #718096; font-weight: normal; margin-top: 2px;
+}
+.amount-cell { font-weight: 600; color: #2f855a; }
+.actions { display: flex; gap: 6px; justify-content: flex-end; }
+.btn-sm {
+  border: none; padding: 6px 12px; border-radius: 6px;
+  cursor: pointer; font-size: 14px; font-weight: 600;
+}
+.btn-edit { background: #bee3f8; color: #2b6cb0; }
+.btn-edit:hover { background: #90cdf4; }
+.btn-del { background: #fed7d7; color: #c53030; }
+.btn-del:hover { background: #fc8181; color: #fff; }
+.empty { text-align: center; padding: 20px; color: #a0aec0; font-size: 15px; }
 
-  /* ★ admin-only লুকানো/দেখানো */
-  .admin-only { display: none !important; }
-  body.is-admin .admin-only { display: block !important; }
-  body.is-admin th.admin-only,
-  body.is-admin td.admin-only { display: table-cell !important; }
-  body.is-admin .toggle-row.admin-only { display: flex !important; }
-  body.is-admin button.admin-only,
-  body.is-admin .btn-save-sheet.admin-only { display: inline-block !important; }
+/* ★ admin-only */
+.admin-only { display: none !important; }
+body.is-admin .admin-only { display: block !important; }
+body.is-admin th.admin-only,
+body.is-admin td.admin-only { display: table-cell !important; }
+body.is-admin .toggle-row.admin-only { display: flex !important; }
+body.is-admin button.admin-only,
+body.is-admin .btn-save-sheet.admin-only { display: inline-block !important; }
 
-  /* ==== সেকশন হেডিং ==== */
-  .section-head {
-    display: flex; justify-content: space-between; align-items: center;
-    color: #fff; padding: 12px 16px; border-radius: 12px;
-    font-weight: 600; font-size: 15px; cursor: pointer;
-    user-select: none; margin-bottom: 8px;
-  }
-  .section-head:hover { opacity: 0.92; }
-  .section-head .title { display: flex; align-items: center; gap: 8px; }
-  .section-head .arrow {
-    display: inline-block; transition: transform 0.3s;
-    font-size: 12px;
-  }
-  .section-head.collapsed .arrow { transform: rotate(-90deg); }
+/* ==== সেকশন হেডিং ==== */
+.section-head {
+  display: flex; justify-content: space-between; align-items: center;
+  color: #fff; padding: 14px 18px; border-radius: 12px;
+  font-weight: 600; font-size: 19px; cursor: pointer;
+  user-select: none; margin-bottom: 8px;
+}
+.section-head:hover { opacity: 0.92; }
+.section-head .title { display: flex; align-items: center; gap: 8px; }
+.section-head .arrow {
+  display: inline-block; transition: transform 0.3s;
+  font-size: 14px;
+}
+.section-head.collapsed .arrow { transform: rotate(-90deg); }
+.section-head .total-meal { font-size: 17px; }
+
+.meal-head { background: #2d3748; }
+.meal-head .total-meal { color: #f6e05e; }
+.khoroch-head { background: #742a2a; }
+.khoroch-head .total-meal { color: #fbb6ce; }
+.member-head { background: #22543d; }
+.member-head .total-meal { color: #9ae6b4; }
+
+/* ==== কলাপ্স বডি ==== */
+.collapsible-body {
+  overflow: hidden; max-height: 0;
+  transition: max-height 0.4s ease;
+  background: #fff; border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  margin-bottom: 16px;
+}
+.collapsible-body.open { max-height: 6000px; }
+.collapsible-body .meal-table-wrap {
+  border-radius: 12px; box-shadow: none; margin-bottom: 0;
+}
+
+.meal-table-wrap { background: #fff; overflow-x: auto; }
+.meal-table { width: 100%; border-collapse: collapse; min-width: 400px; }
+.meal-table th, .meal-table td {
+  padding: 9px 10px; border: 1px solid #e2e8f0;
+  font-size: 16px; text-align: center;
+}
+.meal-table thead th {
+  background: #edf2f7; color: #2d3748;
+  font-size: 15px; font-weight: 700;
+  position: sticky; top: 0;
+}
+.meal-table thead th:first-child {
+  background: #4a5568; color: #fff; min-width: 80px;
+}
+.date-cell {
+  background: #f7fafc; font-size: 14px; color: #4a5568;
+  font-weight: 600; white-space: nowrap;
+}
+.meal-input {
+  width: 100%; border: none; text-align: center;
+  font-size: 16px; padding: 6px 2px; outline: none;
+  background: transparent; font-weight: 600; color: #2d3748;
+  font-family: inherit;
+}
+.meal-input:focus { background: #ebf8ff; border-radius: 4px; }
+.meal-input::-webkit-outer-spin-button,
+.meal-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+.meal-input { -moz-appearance: textfield; }
+.meal-input:disabled { color: #4a5568; cursor: not-allowed; background: #f7fafc; }
+
+/* খরচ টেবিল */
+.khoroch-table { table-layout: auto; }
+.khoroch-table thead th:first-child { background: #742a2a; }
+.khoroch-input-desc { text-align: left !important; padding-left: 10px !important; }
+.khoroch-input-amount {
+  text-align: right !important; padding-right: 10px !important;
+  color: #c53030; width: 100%; min-width: 80px;
+  font-variant-numeric: tabular-nums;
+}
+.khoroch-table td:last-child {
+  width: 1%; white-space: nowrap; padding: 6px 8px;
+}
+
+/* মোট রো */
+.meal-total-row td {
+  background: #fefcbf; font-weight: bold;
+  color: #744210; font-size: 16px;
+}
+.meal-total-row td:first-child { background: #f6ad55; color: #fff; }
+.khoroch-total-row td {
+  background: #fed7d7; font-weight: bold;
+  color: #742a2a; font-size: 16px;
+}
+.khoroch-total-row td:first-child { background: #e53e3e; color: #fff; }
+.member-total-row td {
+  background: #c6f6d5; font-weight: bold;
+  color: #22543d; font-size: 16px;
+}
+.member-total-row td:first-child { background: #22543d; color: #fff; }
+
+/* সদস্যের হিসাব */
+.member-table thead th { background: #22543d; color: #fff; font-size: 15px; }
+.member-table thead th:first-child { background: #22543d; }
+.member-table td { font-size: 15px; }
+.member-name { text-align: left; font-weight: 600; color: #2d3748; padding-left: 10px; }
+.member-meal { color: #2b6cb0; font-weight: 600; }
+.member-cost { color: #805ad5; font-weight: 600; }
+.member-joma { color: #2f855a; font-weight: 600; }
+.member-baki  { color: #c53030; font-weight: 700; }
+.member-return { color: #2f855a; font-weight: 700; }
+.member-equal  { color: #718096; font-weight: 700; }
+.status-badge {
+  display: inline-block; padding: 4px 10px;
+  border-radius: 12px; font-size: 13px; font-weight: 700;
+}
+.badge-baki { background: #fed7d7; color: #c53030; }
+.badge-return { background: #c6f6d5; color: #2f855a; }
+.badge-equal { background: #e2e8f0; color: #4a5568; }
+
+/* লোডিং ব্যাজ */
+.loading {
+  text-align: center; padding: 8px; font-size: 14px;
+  color: #718096;
+}
+.saving-toast {
+  position: fixed; bottom: 20px; right: 20px;
+  background: #2f855a; color: #fff;
+  padding: 12px 20px; border-radius: 10px;
+  font-size: 15px; font-weight: bold;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  opacity: 0; transition: opacity 0.3s;
+  pointer-events: none; z-index: 9999;
+}
+.saving-toast.show { opacity: 1; }
+
+@media (max-width: 480px) {
+  h1 { font-size: 22px; }
+  .stat .value, .sub-card .value { font-size: 22px; }
+  .stat .label, .sub-card .label { font-size: 14px; }
+  th, td { padding: 8px; font-size: 14px; }
+  .meal-table th, .meal-table td { font-size: 14px; }
+  .meal-input { font-size: 14px; }
+  .member-table td { font-size: 13px; }
+  .status-badge { font-size: 11px; padding: 3px 7px; }
+  .section-head { font-size: 16px; padding: 12px 14px; }
   .section-head .total-meal { font-size: 14px; }
-
-  .meal-head { background: #2d3748; }
-  .meal-head .total-meal { color: #f6e05e; }
-  .khoroch-head { background: #742a2a; }
-  .khoroch-head .total-meal { color: #fbb6ce; }
-  .member-head { background: #22543d; }
-  .member-head .total-meal { color: #9ae6b4; }
-
-  /* ==== কলাপ্স বডি ==== */
-  .collapsible-body {
-    overflow: hidden; max-height: 0;
-    transition: max-height 0.4s ease;
-    background: #fff; border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-    margin-bottom: 16px;
-  }
-  .collapsible-body.open { max-height: 6000px; }
-  .collapsible-body .meal-table-wrap {
-    border-radius: 12px; box-shadow: none; margin-bottom: 0;
-  }
-
-  .meal-table-wrap { background: #fff; overflow-x: auto; }
-  .meal-table { width: 100%; border-collapse: collapse; min-width: 400px; }
-  .meal-table th, .meal-table td {
-    padding: 7px 8px; border: 1px solid #e2e8f0;
-    font-size: 13px; text-align: center;
-  }
-  .meal-table thead th {
-    background: #edf2f7; color: #2d3748;
-    font-size: 12px; font-weight: 700;
-    position: sticky; top: 0;
-  }
-  .meal-table thead th:first-child {
-    background: #4a5568; color: #fff; min-width: 70px;
-  }
-  .date-cell {
-    background: #f7fafc; font-size: 11px; color: #4a5568;
-    font-weight: 600; white-space: nowrap;
-  }
-  .meal-input {
-    width: 100%; border: none; text-align: center;
-    font-size: 13px; padding: 5px 2px; outline: none;
-    background: transparent; font-weight: 600; color: #2d3748;
-    font-family: inherit;
-  }
-  .meal-input:focus { background: #ebf8ff; border-radius: 4px; }
-  .meal-input::-webkit-outer-spin-button,
-  .meal-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
-  .meal-input { -moz-appearance: textfield; }
-  .meal-input:disabled { color: #4a5568; cursor: not-allowed; background: #f7fafc; }
-
-  /* খরচ টেবিল */
-  .khoroch-table { table-layout: auto; }
-  .khoroch-table thead th:first-child { background: #742a2a; }
-  .khoroch-input-desc { text-align: left !important; padding-left: 10px !important; }
-  .khoroch-input-amount {
-    text-align: right !important; padding-right: 10px !important;
-    color: #c53030; width: 100%; min-width: 60px;
-    font-variant-numeric: tabular-nums;
-  }
-  .khoroch-table td:last-child {
-    width: 1%; white-space: nowrap; padding: 4px 6px;
-  }
-
-  /* মোট রো */
-  .meal-total-row td {
-    background: #fefcbf; font-weight: bold;
-    color: #744210; font-size: 13px;
-  }
-  .meal-total-row td:first-child { background: #f6ad55; color: #fff; }
-  .khoroch-total-row td {
-    background: #fed7d7; font-weight: bold;
-    color: #742a2a; font-size: 13px;
-  }
-  .khoroch-total-row td:first-child { background: #e53e3e; color: #fff; }
-  .member-total-row td {
-    background: #c6f6d5; font-weight: bold;
-    color: #22543d; font-size: 13px;
-  }
-  .member-total-row td:first-child { background: #22543d; color: #fff; }
-
-  /* সদস্যের হিসাব */
-  .member-table thead th { background: #22543d; color: #fff; }
-  .member-table thead th:first-child { background: #22543d; }
-  .member-table td { font-size: 12px; }
-  .member-name { text-align: left; font-weight: 600; color: #2d3748; padding-left: 10px; }
-  .member-meal { color: #2b6cb0; font-weight: 600; }
-  .member-cost { color: #805ad5; font-weight: 600; }
-  .member-joma { color: #2f855a; font-weight: 600; }
-  .member-baki  { color: #c53030; font-weight: 700; }
-  .member-return { color: #2f855a; font-weight: 700; }
-  .member-equal  { color: #718096; font-weight: 700; }
-  .status-badge {
-    display: inline-block; padding: 3px 8px;
-    border-radius: 12px; font-size: 10px; font-weight: 700;
-  }
-  .badge-baki { background: #fed7d7; color: #c53030; }
-  .badge-return { background: #c6f6d5; color: #2f855a; }
-  .badge-equal { background: #e2e8f0; color: #4a5568; }
-
-  /* লোডিং ব্যাজ */
-  .loading {
-    text-align: center; padding: 8px; font-size: 12px;
-    color: #718096;
-  }
-  .saving-toast {
-    position: fixed; bottom: 20px; right: 20px;
-    background: #2f855a; color: #fff;
-    padding: 10px 18px; border-radius: 10px;
-    font-size: 13px; font-weight: bold;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-    opacity: 0; transition: opacity 0.3s;
-    pointer-events: none; z-index: 9999;
-  }
-  .saving-toast.show { opacity: 1; }
-
-  @media (max-width: 480px) {
-    .stat .value, .sub-card .value { font-size: 15px; }
-    .stat .label, .sub-card .label { font-size: 11px; }
-    th, td { padding: 6px; font-size: 11px; }
-    .member-table td { font-size: 10.5px; }
-    .status-badge { font-size: 9px; padding: 2px 5px; }
-  }
-</style>
+  .btn-admin, .btn-save-sheet, .admin-badge { font-size: 14px; }
+}
+  </style> 
 </head>
 <body>
 
@@ -334,7 +340,7 @@
 
   <!-- ==== ট্রগল ==== -->
   <div class="toggle-row admin-only" id="formToggle" onclick="toggleForm()">
-    <span>➕ নতুন সদস্য / জমা যোগ করুন</span>
+    <span>➕ নতুন সদস্য যোগ করুন</span>
     <div class="switch" id="switch"></div>
   </div>
 
