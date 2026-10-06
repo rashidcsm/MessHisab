@@ -107,11 +107,7 @@ h1 { text-align: center; color: #2d3748; margin: 6px 0 10px; font-size: 28px; }
 .form-inner button:hover { background: #2b6cb0; }
 .hint { font-size: 13px; color: #718096; grid-column: span 2; text-align: center; }
 
-/* ==== জমার টেবিল ==== */
-.table-box {
-  background: #fff; border-radius: 12px; overflow: hidden;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.06); margin-bottom: 20px;
-}
+/* ==== মেইন টেবিল (নাম ও জমা) ==== */
 table { width: 100%; border-collapse: collapse; }
 th, td {
   padding: 11px 12px; text-align: left;
@@ -166,6 +162,8 @@ body.is-admin .btn-save-sheet.admin-only { display: inline-block !important; }
 .section-head.collapsed .arrow { transform: rotate(-90deg); }
 .section-head .total-meal { font-size: 17px; }
 
+.joma-head { background: #2b6cb0; }
+.joma-head .total-meal { color: #bee3f8; }
 .meal-head { background: #2d3748; }
 .meal-head .total-meal { color: #f6e05e; }
 .khoroch-head { background: #742a2a; }
@@ -185,6 +183,7 @@ body.is-admin .btn-save-sheet.admin-only { display: inline-block !important; }
 .collapsible-body .meal-table-wrap {
   border-radius: 12px; box-shadow: none; margin-bottom: 0;
 }
+.collapsible-body table { border-collapse: collapse; }
 
 .meal-table-wrap { background: #fff; overflow-x: auto; }
 .meal-table { width: 100%; border-collapse: collapse; min-width: 400px; }
@@ -354,18 +353,27 @@ body.is-admin .btn-save-sheet.admin-only { display: inline-block !important; }
     </div>
   </div>
 
-  <!-- ==== জমার টেবিল ==== -->
-  <div class="table-box">
-    <table>
-      <thead>
-        <tr>
-          <th>নাম</th>
-          <th>জমা</th>
-          <th style="text-align:right;" class="admin-only">অ্যাকশন</th>
-        </tr>
-      </thead>
-      <tbody id="tableBody"></tbody>
-    </table>
+  <!-- ==== নাম ও জমার হিসাব (কলাপ্সিবল) ==== -->
+  <div class="section-head joma-head collapsed" id="jomaHead" onclick="toggleSection('jomaBody','jomaHead')">
+    <span class="title">
+      <span class="arrow">▼</span>
+      💰 নাম ও জমার হিসাব
+    </span>
+    <span class="total-meal">মোট সদস্য: <span id="jomaCount">০</span></span>
+  </div>
+  <div class="collapsible-body" id="jomaBody">
+    <div class="meal-table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>নাম</th>
+            <th>জমা</th>
+            <th style="text-align:right;" class="admin-only">অ্যাকশন</th>
+          </tr>
+        </thead>
+        <tbody id="tableBody"></tbody>
+      </table>
+    </div>
   </div>
 
   <!-- ==== মিল হিসাব ==== -->
@@ -587,7 +595,6 @@ body.is-admin .btn-save-sheet.admin-only { display: inline-block !important; }
     document.getElementById('formBox').classList.remove('open');
     document.getElementById('switch').classList.remove('active');
 
-    // ★ সরাসরি সেভ
     saveAllToSheets(true);
   }
 
@@ -610,7 +617,6 @@ body.is-admin .btn-save-sheet.admin-only { display: inline-block !important; }
       if (editIndex === index) resetForm();
       save();
       render();
-      // ★ ডিলিটের পর সাথে সাথে Sheets-এ সেভ
       saveAllToSheets(true);
     }
   }
@@ -906,6 +912,9 @@ body.is-admin .btn-save-sheet.admin-only { display: inline-block !important; }
         tbody.appendChild(tr);
       });
     }
+
+    // ★ নাম ও জমার হিসাবের কাউন্ট আপডেট
+    document.getElementById('jomaCount').textContent = toBn(entries.length);
 
     renderMealTable();
     renderKhorochTable();
