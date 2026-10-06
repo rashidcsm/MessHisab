@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>মেসের হিসেব</title>
-  <style>
+<style>
 * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, sans-serif; }
 body {
   margin: 0; padding: 12px;
@@ -294,7 +294,7 @@ body.is-admin .btn-save-sheet.admin-only { display: inline-block !important; }
   .section-head .total-meal { font-size: 14px; }
   .btn-admin, .btn-save-sheet, .admin-badge { font-size: 14px; }
 }
-  </style> 
+</style>
 </head>
 <body>
 
@@ -442,7 +442,7 @@ body.is-admin .btn-save-sheet.admin-only { display: inline-block !important; }
      ★★★ আপনার তথ্য এখানে বসান ★★★
      ========================================================= */
   const API_URL = "https://script.google.com/macros/s/AKfycbxl2h7T7PYxH3HmRB9jK5CkxzMKz8uT3950aROZk7LJEskZh32X4Ow8UBAGMaY7zJDUEw/exec";
-  const SECRET_KEY = "wasi180213";
+  const SECRET_KEY = "wasi";
   /* ========================================================= */
 
   /* ===== ডেটা ===== */
@@ -455,7 +455,6 @@ body.is-admin .btn-save-sheet.admin-only { display: inline-block !important; }
   /* ===== হেল্পার ===== */
   function toBn(num) { return Number(num).toLocaleString('bn-BD'); }
 
-  // ★ দশমিক সহ বাংলা সংখ্যা
   function toBnDecimal(num, digits) {
     digits = (digits === undefined) ? 2 : digits;
     const n = Number(num);
@@ -582,12 +581,14 @@ body.is-admin .btn-save-sheet.admin-only { display: inline-block !important; }
     }
 
     save();
-    autoSaveToSheets();
     resetForm();
     render();
 
     document.getElementById('formBox').classList.remove('open');
     document.getElementById('switch').classList.remove('active');
+
+    // ★ সরাসরি সেভ
+    saveAllToSheets(true);
   }
 
   function editEntry(index) {
@@ -608,8 +609,9 @@ body.is-admin .btn-save-sheet.admin-only { display: inline-block !important; }
       entries.splice(index, 1);
       if (editIndex === index) resetForm();
       save();
-      autoSaveToSheets();
       render();
+      // ★ ডিলিটের পর সাথে সাথে Sheets-এ সেভ
+      saveAllToSheets(true);
     }
   }
 
@@ -712,7 +714,6 @@ body.is-admin .btn-save-sheet.admin-only { display: inline-block !important; }
     let perMeal = 0;
     if (grandMeal > 0) perMeal = totalKhoroch / grandMeal;
 
-    // ★ মাথাপিছু মিল খরচ বাংলা সংখ্যায় (২ দশমিক)
     let perMealText = '০.০০';
     if (perMeal > 0) {
       perMealText = toBnDecimal(perMeal, 2);
@@ -977,8 +978,9 @@ body.is-admin .btn-save-sheet.admin-only { display: inline-block !important; }
       const res = await fetch(API_URL);
       const result = await res.json();
 
-      if (result.status === 'success' && result.data) {
-        const rows = result.data;
+      if (result.status === 'success') {
+        // === Members ===
+        const rows = result.members || [];
         const newEntries = [];
         for (let i = 1; i < rows.length; i++) {
           const r = rows[i];
@@ -992,16 +994,44 @@ body.is-admin .btn-save-sheet.admin-only { display: inline-block !important; }
             });
           }
         }
+        if (newEntries.length > 0) entries = newEntries;
 
-        if (newEntries.length > 0) {
-          entries = newEntries;
+        // === Meals ===
+        const mealRows = result.meals || [];
+        const newMeals = {};
+        for (let i = 1; i < mealRows.length; i++) {
+          const r = mealRows[i];
+          if (!r[0]) continue;
+          const m = String(r[0]);
+          const n = String(r[1]);
+          const d = String(r[2]);
+          if (!newMeals[m]) newMeals[m] = {};
+          if (!newMeals[m][n]) newMeals[m][n] = {};
+          newMeals[m][n][d] = Number(r[3]) || 0;
         }
+        meals = newMeals;
+
+        // === Expenses ===
+        const expRows = result.expenses || [];
+        const newExp = {};
+        for (let i = 1; i < expRows.length; i++) {
+          const r = expRows[i];
+          if (!r[0]) continue;
+          const m = String(r[0]);
+          const d = String(r[1]);
+          if (!newExp[m]) newExp[m] = {};
+          newExp[m][d] = {
+            desc: r[2] || '',
+            amount: Number(r[3]) || ''
+          };
+        }
+        expenses = newExp;
 
         save();
         render();
         loadingMsg.style.display = 'none';
       } else {
-        loadingMsg.textContent = '⚠️ ডেটা লোড ব্যর্থ';
+        loadingMsg.textContent = '⚠️ ডেটা লোড ব্যর্থ: ' + (result.message || '');
         loadingMsg.style.color = '#c53030';
       }
     } catch (e) {
@@ -1025,30 +1055,42 @@ body.is-admin .btn-save-sheet.admin-only { display: inline-block !important; }
       name: e.name,
       joma: Number(e.amount) || 0,
       meals: Number(e.meals) || 0,
-      expenses: Number(e.expenses) || 0
+      expenses: Number(e.expenses) || 0,
+      date: e.date || ''
     }));
 
-    try {
-      await fetch(API_URL, {
-        method: 'POST',
-        mode: 'no-cors',
-        headers: { 'Content-Type': 'text/plain' },
-        body: JSON.stringify({
-          key: SECRET_KEY,
-          action: 'replaceAll',
-          rows: rows
-        })
-      });
+    const payload = {
+      key: SECRET_KEY,
+      action: 'replaceAll',
+      rows: rows,
+      meals: meals,
+      expenses: expenses
+    };
 
-      if (!silent) {
-        alert('✅ Google Sheets-এ সেভ হয়েছে');
+    try {
+      const res = await fetch(API_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify(payload)
+      });
+      const result = await res.json();
+
+      if (result.status === 'success') {
+        if (!silent) {
+          alert('✅ Google Sheets-এ সেভ হয়েছে\n' +
+            'সদস্য: ' + (result.counts?.members || 0) + '\n' +
+            'মিল: ' + (result.counts?.meals || 0) + '\n' +
+            'খরচ: ' + (result.counts?.expenses || 0));
+        } else {
+          showSavingToast('✅ সেভ হয়েছে');
+        }
       } else {
-        showSavingToast('✅ সেভ হয়েছে');
-        console.log('✅ Auto-saved to Sheets');
+        if (!silent) alert('❌ সেভ ব্যর্থ: ' + (result.message || 'unknown'));
+        else console.log('Save failed:', result.message);
       }
     } catch (e) {
       if (!silent) alert('❌ সেভ ব্যর্থ: ' + e.message);
-      else console.log('❌ Auto-save failed:', e);
+      else console.log('Auto-save failed:', e);
     }
   }
 
